@@ -1,22 +1,11 @@
-//============================================================================
-// Name        : LinkedList.cpp
-// Author      : James Richmond
-// Course      : CS-260-J5337 Data Structures and Algorithms 20EW5
-// Date        : 5/16/2020
-// Project Num : 3-2
-// Version     : 1.0
-// Copyright   : Copyright © 2017 SNHU COCE
-// Description : Lab 3-3 Lists and Searching
-//============================================================================
+/*
+ * Utilizes a CSV Parser library to import records into a Linked List data structure
+ * Demonstrates Append, Prepend, Remove, Search functionality
+ */
 
-//TODO: Check for test code
-//TODO: Cleanup comments
-//TODO: fix div/0 in HT?
 //TODO: Check switches/ifs
 //TODO: Security
 //TODO: Enable custom search
-
-
 #include <algorithm>
 #include <iostream>
 #include <time.h>
@@ -25,14 +14,20 @@
 
 using namespace std;
 
-//============================================================================
-// Global definitions visible to all methods and classes
-//============================================================================
+/**
+ * Simple C function to convert a string to a double
+ * after stripping out unwanted char
+ *
+ * credit: http://stackoverflow.com/a/24875936
+ *
+ * @param ch The character to strip out
+ */
+double strToDouble(string str, char ch) {
+	str.erase(remove(str.begin(), str.end(), ch), str.end());
+	return atof(str.c_str());
+}
 
-// forward declarations
-double strToDouble(string str, char ch);
-
-// define a structure to hold bid information
+// A structure to hold bid information
 struct Bid {
 	string bidId; // unique identifier
 	string title;
@@ -51,7 +46,6 @@ private:
 		Bid bid;
 		Node *next;
 
-		// default constructor
 		Node() {
 			next = nullptr;
 		}
@@ -63,8 +57,8 @@ private:
 		}
 	};
 
-	Node* head;
-	Node* tail;
+	Node *head;
+	Node *tail;
 	int size = 0;
 
 public:
@@ -78,86 +72,63 @@ public:
 	int Size();
 };
 
-/**
- * Default constructor
- */
 LinkedList::LinkedList() {
-	// FIXME (2): Initialize housekeeping variables
-	/*
-	 * JR: Initializes head and tail as null pointers until list is populated with nodes
-	 */
+	// Initialize head and tail as null pointers until list is populated with nodes
 	head = tail = nullptr;
 }
 
-/**
- * Destructor
- */
 LinkedList::~LinkedList() {
 }
 
-/**
- * Append a new bid to the end of the list
- */
+// Append a new bid to the end of the list
 void LinkedList::Append(Bid bid) {
-	// FIXME (3): Implement append logic
-	/*
-	 * JR: Creates pointer variable node of type Node, initialized as a new Node (in the heap)
-	 * The first if statement determines if the node being appended is the first node, and sets the node being added as the head if so
-	 * The if statement nested in the else statement checks to see if a tail node exists, and if so, assigns the next pointer of what was previously the tail to the new node
-	 */
-	Node* node = new Node(bid);
-
+	Node *newNode = new Node(bid);
+	// If first node, set as head node
 	if (head == nullptr) {
-		head = node;
+		head = newNode;
+
 	} else {
+		//check to see if a tail node exists, and if so, assigns the next pointer of what was previously the tail to the new node
 		if (tail != nullptr) {
-			tail->next = node;
+			tail->next = newNode;
 		}
 	}
 
 	// new node is  now the tail
-	tail = node;
+	tail = newNode;
 
 	++size;
 }
 
-/**
- * Prepend a new bid to the start of the list
- */
+// Prepend a new bid to the start of the list
 void LinkedList::Prepend(Bid bid) {
-	// FIXME (4): Implement prepend logic
-	/*
-	 * JR: Creates pointer variable node of type Node, initialized as a new Node (in the heap)
-	 * If the head pointer is not null (ie if a first node exists), what was previously the head pointer is assigned to the next pointer of the new node
-	 * The head pointer then is assigned to point to the new node.
-	 */
-	Node* node = new Node(bid);
+	Node *newNode = new Node(bid);
 
+	// if a head node exists, set new node next ptr to current head
 	if (head != nullptr) {
-		node->next = head;
+		newNode->next = head;
 	}
 
-	head = node;
+	head = newNode;
 
 	++size;
 }
 
-/**
- * Simple output of all bids in the list
- */
+// Print all bid objects to console
 void LinkedList::PrintList() {
-	// FIXME (5): Implement print logic
-	/*
-	 * JR: Creates pointer variable curNode, initialized to head
-	 * This sets the node pointed to by head as the first to be operated on
-	 * The while loop iterates through the nodes until the pointer to the next node is nullptr (indicating there is no next node)
-	 * The loop prints the bid variables to the terminal
-	 */
-	Node* curNode = head;
 
+	// Forward declaration
+	void displayBid(Bid bid);
+
+	// Start at head node
+	Node *curNode = head;
+
+	// Iterate until next ptr is nullptr (ie through whole linked list)
 	while (curNode != nullptr) {
-		cout << curNode->bid.bidId << ": " << curNode->bid.title << " | "
-				<< curNode->bid.amount << " | " << curNode->bid.fund << endl;
+
+		displayBid(curNode->bid);
+
+		// Continue iterating
 		curNode = curNode->next;
 	}
 }
@@ -168,37 +139,36 @@ void LinkedList::PrintList() {
  * @param bidId The bid id to remove from the list
  */
 void LinkedList::Remove(string bidId) {
-	// FIXME (6): Implement remove logic
-	/*
-	 * JR: If node to be removed is pointed to by the list head (ie the first node), creates tempNode to hold a pointer to the second node
-	 * First node is then deleted, and the head pointer is set to the second node.
-	 * If node to be removed is not the first node, a while loop iterates through nodes until the node containing the bid with the matching ID is found (in the node after the current node)
-	 * When the matching node is found, tempNode is set to the matching node, and then the next pointer for tempNode is assigned to the next pointer for the currently iterated node.
-	 */
+	// Node to be deleted is head node
 	if (head != nullptr) {
 		if (head->bid.bidId.compare(bidId) == 0) {
 
-			Node* tempNode = head->next;
+			// transfer pointers
+			Node *tempNode = head->next;
 			delete head;
 			head = tempNode;
-
 		}
 	}
 
-	Node* curNode = head;
+	Node *curNode = head;
 
+	// Iterate the whole linked list
 	while (curNode->next != nullptr) {
-		if (curNode->next->bid.bidId.compare(bidId) == 0) {
-			Node* tempNode = curNode->next;
 
+		// Sought bid is found in next ptr
+		if (curNode->next->bid.bidId.compare(bidId) == 0) {
+
+			// transfer pointers to skip node
+			Node *tempNode = curNode->next;
 			curNode->next = tempNode->next;
 
 			delete tempNode;
 
 			--size;
-
 			return;
 		}
+
+		// Continue iterating
 		curNode = curNode->next;
 	}
 }
@@ -209,35 +179,30 @@ void LinkedList::Remove(string bidId) {
  * @param bidId The bid id to search for
  */
 Bid LinkedList::Search(string bidId) {
-	// FIXME (7): Implement search logic
-	/*
-	 * JR: Iterates over nodes similarly to print, append, prepend methods
-	 * Compares bidId given as argument to bidId of each bid in each node
-	 * When a match is found, returns bid containing matching bidId
-	 * Returns an empty bid object if the matching key is not found.
-	 */
-	Node* curNode = head;
 
+	Node *curNode = head;
+
+	// Iterate the whole linked list
 	while (curNode != nullptr) {
+
+		// Sought bid found
 		if (curNode->bid.bidId.compare(bidId) == 0) {
 			return curNode->bid;
 		}
+
+		// Continue iterating
 		curNode = curNode->next;
 	}
+
+	// Return empty object if sought bid not found
 	Bid emptyBid;
 	return emptyBid;
 }
 
-/**
- * Returns the current size (number of elements) in the list
- */
+// Returns the current size (number of elements) in the list
 int LinkedList::Size() {
 	return size;
 }
-
-//============================================================================
-// Static methods used for testing
-//============================================================================
 
 /**
  * Display the bid information
@@ -256,6 +221,7 @@ void displayBid(Bid bid) {
  * @return Bid struct containing the bid info
  */
 Bid getBid() {
+	// TODO: Check for input bounds
 	Bid bid;
 
 	cout << "Enter Id: ";
@@ -289,7 +255,7 @@ void loadBids(string csvPath, LinkedList *list) {
 	csv::Parser file = csv::Parser(csvPath);
 
 	try {
-		// loop to read rows of a CSV file
+		// Read rows of a CSV file
 		for (unsigned int i = 0; i < file.rowCount(); i++) {
 
 			// initialize a bid using data from current row (i)
@@ -299,31 +265,20 @@ void loadBids(string csvPath, LinkedList *list) {
 			bid.fund = file[i][8];
 			bid.amount = strToDouble(file[i][4], '$');
 
-			//cout << bid.bidId << ": " << bid.title << " | " << bid.fund << " | " << bid.amount << endl;
-
 			// add this bid to the end
 			list->Append(bid);
 		}
+
+		// Deallocate parser object
+		file.~Parser();
+
 	} catch (csv::Error &e) {
 		std::cerr << e.what() << std::endl;
 	}
 }
 
 /**
- * Simple C function to convert a string to a double
- * after stripping out unwanted char
- *
- * credit: http://stackoverflow.com/a/24875936
- *
- * @param ch The character to strip out
- */
-double strToDouble(string str, char ch) {
-	str.erase(remove(str.begin(), str.end(), ch), str.end());
-	return atof(str.c_str());
-}
-
-/**
- * The one and only main() method
+ * Main
  *
  * @param arg[1] path to CSV file to load from (optional)
  * @param arg[2] the bid Id to use when searching the list (optional)
