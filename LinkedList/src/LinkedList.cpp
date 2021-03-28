@@ -269,14 +269,27 @@ void loadBids(string csvPath, LinkedList *list) {
 			list->Append(bid);
 		}
 
-		// Deallocate parser object
-		file.~Parser();
-
 	} catch (csv::Error &e) {
 		std::cerr << e.what() << std::endl;
 	}
 }
 
+string getBidId() {
+
+	string bidKey;
+	cout << "Enter a bid ID" << endl;
+	cin.ignore();
+	getline(cin, bidKey);
+
+	return bidKey;
+}
+
+void displayTime(clock_t ticks) {
+	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+	cout << "time: " << ticks << " ticks" << endl;
+	cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+
+}
 /**
  * Main
  *
@@ -290,15 +303,9 @@ int main(int argc, char *argv[]) {
 	switch (argc) {
 	case 2:
 		csvPath = argv[1];
-		bidKey = "98109";
-		break;
-	case 3:
-		csvPath = argv[1];
-		bidKey = argv[2];
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		bidKey = "98109";
 	}
 
 	clock_t ticks;
@@ -307,52 +314,55 @@ int main(int argc, char *argv[]) {
 
 	Bid bid;
 
+	// Load bid objects from CSV file
+	ticks = clock();
+	loadBids(csvPath, &bidList);
+	cout << bidList.Size() << " bids read" << endl;
+	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+	displayTime(ticks);
+
 	int choice = 0;
 	while (choice != 9) {
 		cout << "Menu:" << endl;
-		cout << "  1. Enter a Bid (Append)" << endl;
-		cout << "  2. Load Bids" << endl;
-		cout << "  3. Display All Bids" << endl;
+		cout << "  1. Display All Bids" << endl;
+		cout << "  2. Enter a Bid (Append)" << endl;
+		cout << "  3. Enter a Bid (Prepend)" << endl;
 		cout << "  4. Find Bid" << endl;
 		cout << "  5. Remove Bid" << endl;
-		cout << "  6. Enter a Bid (Prepend)" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 		cin >> choice;
 
 		switch (choice) {
+
 		case 1:
+			bidList.PrintList();
+
+			break;
+
+		case 2:
 			bid = getBid();
 			bidList.Append(bid);
 			displayBid(bid);
 
 			break;
 
-		case 2:
-			ticks = clock();
-
-			loadBids(csvPath, &bidList);
-
-			cout << bidList.Size() << " bids read" << endl;
-
-			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-			cout << "time: " << ticks << " milliseconds" << endl;
-			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds"
-					<< endl;
-
-			break;
-
 		case 3:
-			bidList.PrintList();
+			bid = getBid();
+			bidList.Prepend(bid);
+			displayBid(bid);
 
 			break;
 
 		case 4:
 			ticks = clock();
 
+			// Prompt user for a bid ID and search
+			bidKey = getBidId();
 			bid = bidList.Search(bidKey);
 
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+
 
 			if (!bid.bidId.empty()) {
 				displayBid(bid);
@@ -360,13 +370,13 @@ int main(int argc, char *argv[]) {
 				cout << "Bid Id " << bidKey << " not found." << endl;
 			}
 
-			cout << "time: " << ticks << " clock ticks" << endl;
-			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds"
-					<< endl;
+			displayTime(ticks);
 
 			break;
 
 		case 5:
+			// Prompt user for a bid ID and remove
+			bidKey = getBidId();
 			bidList.Remove(bidKey);
 
 			break;
@@ -378,6 +388,13 @@ int main(int argc, char *argv[]) {
 
 			break;
 
+		case 9:
+			break;
+
+		default:
+			cout << "Not a valid selection.";
+
+			break;
 		}
 	}
 
