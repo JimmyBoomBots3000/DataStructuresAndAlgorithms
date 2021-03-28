@@ -17,6 +17,13 @@
 
 using namespace std;
 
+//TODO: Check for test code
+//TODO: Cleanup comments
+//TODO: fix div/0 in HT?
+//TODO: Check switches/ifs
+//TODO: Security
+//TODO: Enable custom search
+
 //============================================================================
 // Global definitions visible to all methods and classes
 //============================================================================
