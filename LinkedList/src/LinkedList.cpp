@@ -284,13 +284,12 @@ void displayTime(clock_t ticks) {
 	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 	cout << "time: " << ticks << " ticks" << endl;
 	cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
-
 }
+
 /**
  * Main
  *
  * @param arg[1] path to CSV file to load from (optional)
- * @param arg[2] the bid Id to use when searching the list (optional)
  */
 int main(int argc, char *argv[]) {
 
