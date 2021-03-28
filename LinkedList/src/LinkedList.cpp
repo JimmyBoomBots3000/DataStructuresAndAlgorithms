@@ -3,9 +3,6 @@
  * Demonstrates Append, Prepend, Remove, Search functionality
  */
 
-//TODO: Check switches/ifs
-//TODO: Security
-//TODO: Enable custom search
 #include <algorithm>
 #include <iostream>
 #include <time.h>
@@ -221,7 +218,6 @@ void displayBid(Bid bid) {
  * @return Bid struct containing the bid info
  */
 Bid getBid() {
-	// TODO: Check for input bounds
 	Bid bid;
 
 	cout << "Enter Id: ";
@@ -331,7 +327,13 @@ int main(int argc, char *argv[]) {
 		cout << "  5. Remove Bid" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
-		cin >> choice;
+
+		// Prompt for selection - check input
+		while (!(cin >> choice)) {
+			cout << "Invalid choice, please try again" << endl;
+			cin.clear();
+			cin.ignore();
+		}
 
 		switch (choice) {
 
@@ -362,7 +364,6 @@ int main(int argc, char *argv[]) {
 			bid = bidList.Search(bidKey);
 
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-
 
 			if (!bid.bidId.empty()) {
 				displayBid(bid);
