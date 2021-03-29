@@ -11,10 +11,6 @@
 
 #include "CSVparser.hpp"
 
-//TODO: Check switches/ifs
-//TODO: Security
-//TODO: Enable custom search
-
 using namespace std;
 
 const unsigned int DEFAULT_SIZE = 179;
@@ -114,7 +110,7 @@ HashTable::~HashTable() {
  * @return The calculated hash
  */
 unsigned int HashTable::Hash(int key) {
-	// FIXME (4): Implement logic to calculate a hash value
+
 	return key % tableSize;
 }
 
@@ -164,6 +160,33 @@ void displayBid(Bid bid) {
 }
 
 /**
+ * Prompt user for bid information
+ *
+ * @return Bid struct containing the bid info
+ */
+Bid getBid() {
+	Bid bid;
+
+	cout << "Enter Id: ";
+	cin.ignore();
+	getline(cin, bid.bidId);
+
+	cout << "Enter title: ";
+	getline(cin, bid.title);
+
+	cout << "Enter fund: ";
+	cin >> bid.fund;
+
+	cout << "Enter amount: ";
+	cin.ignore();
+	string strAmount;
+	getline(cin, strAmount);
+	bid.amount = strToDouble(strAmount, '$');
+
+	return bid;
+}
+
+/**
  * Print all bids
  */
 void HashTable::PrintAll() {
@@ -188,9 +211,9 @@ void HashTable::PrintAll() {
 
 			// display 'Key' only for first bid of key, otherwise padding spaces
 			if (newKey == true) {
-				cout << "Key ";
+				cout << "Key " << key << " ";
 			} else {
-				cout << "    ";
+				cout << "\t";
 			}
 
 			// display bid information
@@ -210,6 +233,8 @@ void HashTable::PrintAll() {
 	cout << displayCounter << " bids displayed" << endl;
 }
 
+// FIXME: Deleting a bid shifts table keys
+// FIXME: Deleting a bid throws out-of-range on a subsequent PrintAll()
 /**
  * Remove a bid
  *
@@ -219,6 +244,8 @@ void HashTable::Remove(string bidId) {
 
 	// calculate the key for this bid
 	unsigned key = Hash(stoi(bidId));
+
+	//
 	nodes.erase(nodes.begin() + key);
 }
 
@@ -303,25 +330,30 @@ void displayTime(clock_t ticks) {
 	cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
 }
 
+string getBidId() {
+
+	string bidKey;
+	cout << "Enter a bid ID" << endl;
+	cin.ignore();
+	getline(cin, bidKey);
+
+	return bidKey;
+}
+
 /**
  * The one and only main() method
  */
 int main(int argc, char *argv[]) {
 
-	// process command line arguments
 	string csvPath, searchValue;
+
+	// process command line arguments
 	switch (argc) {
 	case 2:
 		csvPath = argv[1];
-		searchValue = "98109";
-		break;
-	case 3:
-		csvPath = argv[1];
-		searchValue = argv[2];
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		searchValue = "98109";
 	}
 
 	// Define a timer variable
@@ -342,7 +374,8 @@ int main(int argc, char *argv[]) {
 	int choice = 0;
 	while (choice != 9) {
 		cout << "Menu:" << endl;
-		cout << "  2. Display All Bids" << endl;
+		cout << "  1. Display All Bids" << endl;
+		cout << "  2. Enter a Bid" << endl;
 		cout << "  3. Find Bid" << endl;
 		cout << "  4. Remove Bid" << endl;
 		cout << "  9. Exit" << endl;
@@ -357,16 +390,26 @@ int main(int argc, char *argv[]) {
 
 		switch (choice) {
 
-		case 2:
+		case 1:
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 			bidTable->PrintAll();
 			displayTime(ticks);
 
 			break;
 
+		case 2:
+			bid = getBid();
+			bidTable->Insert(bid);
+			displayBid(bid);
+
+			break;
+
+
 		case 3:
 			ticks = clock();
 
+			// Prompt user for a bid ID and search
+			searchValue = getBidId();
 			bid = bidTable->Search(searchValue);
 
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
@@ -383,6 +426,8 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 4:
+			// Prompt user for a bid ID and search
+			searchValue = getBidId();
 			bidTable->Remove(searchValue);
 			break;
 
