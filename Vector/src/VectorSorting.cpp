@@ -315,8 +315,6 @@ int main(int argc, char *argv[]) {
 			// Prompt user for a bid ID
 			bidKey = getBidId();
 
-			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-
 			// Search for entered bid id
 			for (auto searchBid : bids) {
 				if (searchBid.bidId.compare(bidKey) == 0) {

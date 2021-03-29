@@ -356,12 +356,10 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 4:
-			ticks = clock();
-
 			// Prompt user for a bid ID and search
 			bidKey = getBidId();
+			ticks = clock();
 			bid = bidList.Search(bidKey);
-
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
 			if (!bid.bidId.empty()) {
