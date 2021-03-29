@@ -6,13 +6,11 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
-#include <string> // atoi
+#include <string>
 #include <time.h>
 
 #include "CSVparser.hpp"
 
-//TODO: Check for test code
-//TODO: Cleanup comments
 //TODO: Check switches/ifs
 //TODO: Security
 //TODO: Enable custom search
@@ -34,7 +32,7 @@ double strToDouble(string str, char ch) {
 	return atof(str.c_str());
 }
 
-// define a structure to hold bid information
+// A structure to hold bid information
 struct Bid {
 	string bidId; // unique identifier
 	string title;
@@ -45,14 +43,10 @@ struct Bid {
 	}
 };
 
-/**
- * Define a class containing data members and methods to
- * implement a hash table with chaining.
- */
 class HashTable {
 
 private:
-	// FIXME (1): Define structures to hold bids
+	// Node for hash table/linked list for collisions
 	struct Node {
 		Bid bid;
 		unsigned key;
@@ -97,7 +91,6 @@ public:
  * Default constructor
  */
 HashTable::HashTable() {
-	// FIXME (2): Initialize the structures used to hold bids
 	nodes.resize(tableSize);
 }
 
@@ -110,15 +103,12 @@ HashTable::HashTable(unsigned size) {
  * Destructor
  */
 HashTable::~HashTable() {
-	// FIXME (3): Implement logic to free storage when class is destroyed
+	// Free storage when class is destroyed
 	nodes.erase(nodes.begin());
 }
 
 /**
  * Calculate the hash value of a given key.
- * Note that key is specifically defined as
- * unsigned int to prevent undefined results
- * of a negative list index.
  *
  * @param key The key to hash
  * @return The calculated hash
@@ -134,10 +124,9 @@ unsigned int HashTable::Hash(int key) {
  * @param bid The bid to insert
  */
 void HashTable::Insert(Bid bid) {
-	// FIXME (5): Implement logic to insert a bid
 
 	// calculate the key for this bid
-	unsigned key = Hash(atoi(bid.bidId.c_str()));
+	unsigned key = Hash(stoi(bid.bidId));
 
 	// try to retrieve node using the key
 	Node *oldNode = &(nodes.at(key));
@@ -146,6 +135,7 @@ void HashTable::Insert(Bid bid) {
 	if (oldNode == nullptr) {
 		Node *newNode = new Node(bid, key);
 		nodes.insert(nodes.begin() + key, (*newNode));
+
 	} else {
 		//node found
 		if (oldNode->key == UINT_MAX) {
@@ -163,10 +153,20 @@ void HashTable::Insert(Bid bid) {
 }
 
 /**
+ * Display the bid information to the console (std::out)
+ *
+ * @param bid struct containing the bid info
+ */
+void displayBid(Bid bid) {
+	cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
+			<< bid.fund << endl;
+	return;
+}
+
+/**
  * Print all bids
  */
 void HashTable::PrintAll() {
-	// FIXME (6): Implement logic to print all bids
 
 	cout << "Displaying bids" << endl;
 
@@ -195,8 +195,7 @@ void HashTable::PrintAll() {
 
 			// display bid information
 			bid = node->bid;
-			cout << key << ": " << bid.bidId << ": " << bid.title << " | "
-					<< bid.amount << " | " << bid.fund << endl;
+			displayBid(bid);
 
 			// increment counter
 			displayCounter++;
@@ -217,10 +216,9 @@ void HashTable::PrintAll() {
  * @param bidId The bid id to search for
  */
 void HashTable::Remove(string bidId) {
-	// FIXME (7): Implement logic to remove a bid
 
 	// calculate the key for this bid
-	unsigned key = Hash(atoi(bidId.c_str()));
+	unsigned key = Hash(stoi(bidId));
 	nodes.erase(nodes.begin() + key);
 }
 
@@ -231,8 +229,6 @@ void HashTable::Remove(string bidId) {
  */
 Bid HashTable::Search(string bidId) {
 	Bid bid;
-
-	// FIXME (8): Implement logic to search for and return a bid
 
 	// calculate the key for this bid
 	unsigned key = Hash(atoi(bidId.c_str()));
@@ -262,20 +258,6 @@ Bid HashTable::Search(string bidId) {
 	return bid;
 }
 
-//============================================================================
-// Static methods used for testing
-//============================================================================
-
-/**
- * Display the bid information to the console (std::out)
- *
- * @param bid struct containing the bid info
- */
-void displayBid(Bid bid) {
-	cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
-			<< bid.fund << endl;
-	return;
-}
 
 /**
  * Load a CSV file containing bids into a container
@@ -306,8 +288,6 @@ void loadBids(string csvPath, HashTable *hashTable) {
 			bid.title = file[i][0];
 			bid.fund = file[i][8];
 			bid.amount = strToDouble(file[i][4], '$');
-
-			//cout << "Item: " << bid.title << ", Fund: " << bid.fund << ", Amount: " << bid.amount << endl;
 
 			// push this bid to the end
 			hashTable->Insert(bid);
@@ -367,7 +347,13 @@ int main(int argc, char *argv[]) {
 		cout << "  4. Remove Bid" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
-		cin >> choice;
+
+		// Prompt for selection - check input
+		while (!(cin >> choice)) {
+			cout << "Invalid choice, please try again" << endl;
+			cin.clear();
+			cin.ignore();
+		}
 
 		switch (choice) {
 
@@ -385,6 +371,7 @@ int main(int argc, char *argv[]) {
 
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
+			// Display bid info if found
 			if (!bid.bidId.empty()) {
 				displayBid(bid);
 			} else {
@@ -397,6 +384,9 @@ int main(int argc, char *argv[]) {
 
 		case 4:
 			bidTable->Remove(searchValue);
+			break;
+
+		case 9:
 			break;
 
 		default:
