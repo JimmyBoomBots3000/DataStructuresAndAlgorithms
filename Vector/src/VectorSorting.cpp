@@ -202,6 +202,16 @@ void selectionSort(vector<Bid> &bids) {
 	}
 }
 
+string getBidId() {
+
+	string bidKey;
+	cout << "Enter a bid ID" << endl;
+	cin.ignore();
+	getline(cin, bidKey);
+
+	return bidKey;
+}
+
 void displayTime(clock_t ticks) {
 	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 	cout << "time: " << ticks << " ticks" << endl;
@@ -216,7 +226,7 @@ void displayTime(clock_t ticks) {
 int main(int argc, char *argv[]) {
 
 	// process command line arguments
-	string csvPath;
+	string csvPath, bidKey;
 	switch (argc) {
 	case 2:
 		csvPath = argv[1];
@@ -230,7 +240,14 @@ int main(int argc, char *argv[]) {
 
 	clock_t ticks;
 
+	Bid bid;
+
+	bool bidFound;
+
+
 	ticks = clock();
+
+	// Define a vector to hold all the bids
 	bids = loadBids(csvPath);
 	cout << bids.size() << " bids read" << endl;
 	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
@@ -243,6 +260,7 @@ int main(int argc, char *argv[]) {
 		cout << "  2. Display All Bids" << endl;
 		cout << "  3. Selection Sort All Bids" << endl;
 		cout << "  4. Quick Sort All Bids" << endl;
+		cout << "  5. Find Bid" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 
@@ -252,6 +270,8 @@ int main(int argc, char *argv[]) {
 			cin.clear();
 			cin.ignore();
 		}
+
+		bidFound = false;
 
 		switch (choice) {
 
@@ -291,14 +311,43 @@ int main(int argc, char *argv[]) {
 
 			break;
 
+		case 5:
+			ticks = clock();
+
+			// Prompt user for a bid ID
+			bidKey = getBidId();
+
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+
+			// Search for entered bid id
+			for (auto searchBid : bids) {
+				if (searchBid.bidId.compare(bidKey) == 0) {
+					displayBid(searchBid);
+					bidFound = true;
+				}
+			}
+			if (!bidFound) {
+				cout << "Bid Id " << bidKey << " not found." << endl;
+			}
+
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+			displayTime(ticks);
+
+			break;
+
+		case 9:
+			break;
+
 		default:
 			cout << "Not a valid selection.";
 
 			break;
+
 		}
 	}
 
 	cout << "Good bye." << endl;
 
 	return 0;
+
 }
