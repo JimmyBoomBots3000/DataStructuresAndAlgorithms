@@ -1,13 +1,7 @@
-//============================================================================
-// Name        : BinarySearchTree.cpp
-// Author      : James Richmond
-// Course      : CS-260-J5337 Data Structures and Algorithms 20EW5
-// Date        : 6/14/2020
-// Project Num : 6-2
-// Version     : 1.0
-// Copyright   : Copyright © 2017 SNHU COCE
-// Description : Binary Search Tree Algorithms
-//============================================================================
+/*
+ * Utilizes a CSV Parser library to import records into a Binary Search Tree data structure
+ * Demonstrates Insert, Remove, Search functionality
+ */
 
 #include <iostream>
 #include <time.h>
@@ -15,23 +9,25 @@
 
 #include "CSVparser.hpp"
 
-//TODO: Check for test code
-//TODO: Cleanup comments
-//TODO: fix div/0 in HT?
-//TODO: Check switches/ifs
 //TODO: Security
 //TODO: Enable custom search
 
 using namespace std;
 
-//============================================================================
-// Global definitions visible to all methods and classes
-//============================================================================
+/**
+ * Simple C function to convert a string to a double
+ * after stripping out unwanted char
+ *
+ * credit: http://stackoverflow.com/a/24875936
+ *
+ * @param ch The character to strip out
+ */
+double strToDouble(string str, char ch) {
+    str.erase(remove(str.begin(), str.end(), ch), str.end());
+    return atof(str.c_str());
+}
 
-// forward declarations
-double strToDouble(string str, char ch);
-
-// define a structure to hold bid information
+// Structure to hold bid information
 struct Bid {
     string bidId; // unique identifier
     string title;
@@ -42,7 +38,7 @@ struct Bid {
     }
 };
 
-// FIXME (1): Internal structure for tree node
+// Structure for tree node
 struct Node {
 	Bid bid;
 	Node* left;
@@ -57,10 +53,6 @@ struct Node {
 		this->bid = aBid;
 	}
 };
-
-//============================================================================
-// Binary Search Tree class definition
-//============================================================================
 
 /**
  * Define a class containing data members and methods to
@@ -83,6 +75,17 @@ public:
     void Remove(string bidId);
     Bid Search(string bidId);
 };
+
+/**
+ * Display the bid information to the console (std::out)
+ *
+ * @param bid struct containing the bid info
+ */
+void displayBid(Bid bid) {
+    cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
+            << bid.fund << endl;
+    return;
+}
 
 /**
  * Default constructor
@@ -109,7 +112,6 @@ void BinarySearchTree::InOrder() {
  * Insert a bid
  */
 void BinarySearchTree::Insert(Bid bid) {
-    // FIXME (2a) Implement inserting a bid into the tree
 	if (root == nullptr) {
 		root = new Node(bid);
 	} else {
@@ -122,7 +124,6 @@ void BinarySearchTree::Insert(Bid bid) {
  * Remove a bid
  */
 void BinarySearchTree::Remove(string bidId) {
-    // FIXME (4a) Implement removing a bid from the tree
 	this->removeNode(root, bidId);
 
 }
@@ -131,8 +132,6 @@ void BinarySearchTree::Remove(string bidId) {
  * Search for a bid
  */
 Bid BinarySearchTree::Search(string bidId) {
-    // FIXME (3) Implement searching the tree for a bid
-
 	// start searching from root
 	Node* current = root;
 
@@ -146,6 +145,7 @@ Bid BinarySearchTree::Search(string bidId) {
 		if (current->bid.bidId.compare(bidId) > 0) {
 			current = current->left;
 		} else {
+			// else right
 			current = current->right;
 		}
 	}
@@ -161,8 +161,6 @@ Bid BinarySearchTree::Search(string bidId) {
  * @param bid Bid to be added
  */
 void BinarySearchTree::addNode(Node* node, Bid bid) {
-    // FIXME (2b) Implement inserting a bid into the tree
-
 	// if node is larger than bid, add to left subtree
 	if (node->bid.bidId.compare(bid.bidId) > 0) {
 		if (node->left == nullptr) {
@@ -189,13 +187,11 @@ void BinarySearchTree::inOrder(Node* node) {
 	if (node != nullptr) {
 		// traverse down left subtree recursively
 		inOrder(node->left);
-		cout << node->bid.bidId << ": " << node->bid.title << " | " << node->bid.amount << " | "
-		            << node->bid.fund << endl;
+		displayBid(node->bid);
 		// traverse right subtree as inOrder falls up from recursive calls
 		inOrder(node->right);
 	}
 }
-
 
 /*
  * Remove a node that contains a bid whose bidId matches bidKey
@@ -242,20 +238,6 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 	return node;
 
 }
-//============================================================================
-// Static methods used for testing
-//============================================================================
-
-/**
- * Display the bid information to the console (std::out)
- *
- * @param bid struct containing the bid info
- */
-void displayBid(Bid bid) {
-    cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
-            << bid.fund << endl;
-    return;
-}
 
 /**
  * Load a CSV file containing bids into a container
@@ -297,18 +279,6 @@ void loadBids(string csvPath, BinarySearchTree* bst) {
     }
 }
 
-/**
- * Simple C function to convert a string to a double
- * after stripping out unwanted char
- *
- * credit: http://stackoverflow.com/a/24875936
- *
- * @param ch The character to strip out
- */
-double strToDouble(string str, char ch) {
-    str.erase(remove(str.begin(), str.end(), ch), str.end());
-    return atof(str.c_str());
-}
 
 /**
  * The one and only main() method
@@ -360,8 +330,6 @@ int main(int argc, char* argv[]) {
 
             // Complete the method call to load the bids
             loadBids(csvPath, bst);
-
-            //cout << bst->Size() << " bids read" << endl;
 
             // Calculate elapsed time and display result
             ticks = clock() - ticks; // current clock ticks minus starting clock ticks
