@@ -11,9 +11,6 @@
 
 using namespace std;
 
-//TODO: Security
-//TODO: Enable custom search
-
 /**
  * Simple C function to convert a string to a double
  * after stripping out unwanted char
@@ -54,6 +51,7 @@ void displayBid(Bid bid) {
  *
  * @return Bid struct containing the bid info
  */
+
 Bid getBid() {
 	Bid bid;
 
@@ -244,7 +242,6 @@ int main(int argc, char *argv[]) {
 
 	bool bidFound;
 
-
 	ticks = clock();
 
 	// Define a vector to hold all the bids
@@ -261,6 +258,7 @@ int main(int argc, char *argv[]) {
 		cout << "  3. Selection Sort All Bids" << endl;
 		cout << "  4. Quick Sort All Bids" << endl;
 		cout << "  5. Find Bid" << endl;
+		cout << "  6. Enter a Bid" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 
@@ -330,6 +328,15 @@ int main(int argc, char *argv[]) {
 				cout << "Bid Id " << bidKey << " not found." << endl;
 			}
 
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+			displayTime(ticks);
+
+			break;
+
+		case 6:
+			ticks = clock();
+			bid = getBid();
+			bids.push_back(bid); // add bid to vector
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 			displayTime(ticks);
 
