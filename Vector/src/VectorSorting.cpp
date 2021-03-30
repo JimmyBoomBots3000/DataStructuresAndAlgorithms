@@ -344,7 +344,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 		default:
-			cout << "Not a valid selection.";
+			cout << "Not a valid selection." << endl;
 
 			break;
 

@@ -9,9 +9,6 @@
 
 #include "CSVparser.hpp"
 
-//TODO: Security
-//TODO: Enable custom search
-
 using namespace std;
 
 /**
@@ -23,33 +20,34 @@ using namespace std;
  * @param ch The character to strip out
  */
 double strToDouble(string str, char ch) {
-    str.erase(remove(str.begin(), str.end(), ch), str.end());
-    return atof(str.c_str());
+	str.erase(remove(str.begin(), str.end(), ch), str.end());
+	return atof(str.c_str());
 }
 
 // Structure to hold bid information
 struct Bid {
-    string bidId; // unique identifier
-    string title;
-    string fund;
-    double amount;
-    Bid() {
-        amount = 0.0;
-    }
+	string bidId; // unique identifier
+	string title;
+	string fund;
+	double amount;
+	Bid() {
+		amount = 0.0;
+	}
 };
 
 // Structure for tree node
 struct Node {
 	Bid bid;
-	Node* left;
-	Node* right;
+	Node *left;
+	Node *right;
 
 	//default constructor
 	Node() {
 		left = nullptr;
 		right = nullptr;
 	}
-	Node(Bid aBid) : Node() {
+	Node(Bid aBid) :
+			Node() {
 		this->bid = aBid;
 	}
 };
@@ -61,19 +59,19 @@ struct Node {
 class BinarySearchTree {
 
 private:
-    Node* root;
+	Node *root;
 
-    void addNode(Node* node, Bid bid);
-    void inOrder(Node* node);
-    Node* removeNode(Node* node, string bidId);
+	void addNode(Node *node, Bid bid);
+	void inOrder(Node *node);
+	Node* removeNode(Node *node, string bidId);
 
 public:
-    BinarySearchTree();
-    virtual ~BinarySearchTree();
-    void InOrder();
-    void Insert(Bid bid);
-    void Remove(string bidId);
-    Bid Search(string bidId);
+	BinarySearchTree();
+	virtual ~BinarySearchTree();
+	void InOrder();
+	void Insert(Bid bid);
+	void Remove(string bidId);
+	Bid Search(string bidId);
 };
 
 /**
@@ -82,16 +80,16 @@ public:
  * @param bid struct containing the bid info
  */
 void displayBid(Bid bid) {
-    cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
-            << bid.fund << endl;
-    return;
+	cout << bid.bidId << ": " << bid.title << " | " << bid.amount << " | "
+			<< bid.fund << endl;
+	return;
 }
 
 /**
  * Default constructor
  */
 BinarySearchTree::BinarySearchTree() {
-    // initialize housekeeping variables
+	// initialize housekeeping variables
 	root = nullptr;
 }
 
@@ -99,7 +97,7 @@ BinarySearchTree::BinarySearchTree() {
  * Destructor
  */
 BinarySearchTree::~BinarySearchTree() {
-    // recurse from root deleting every node
+	// recurse from root deleting every node
 }
 
 /**
@@ -133,7 +131,7 @@ void BinarySearchTree::Remove(string bidId) {
  */
 Bid BinarySearchTree::Search(string bidId) {
 	// start searching from root
-	Node* current = root;
+	Node *current = root;
 
 	// loop down the BST until bid is found or bottom is reached
 	while (current != nullptr) {
@@ -151,7 +149,7 @@ Bid BinarySearchTree::Search(string bidId) {
 	}
 
 	Bid bid;
-    return bid;
+	return bid;
 }
 
 /**
@@ -160,7 +158,7 @@ Bid BinarySearchTree::Search(string bidId) {
  * @param node Current node in tree
  * @param bid Bid to be added
  */
-void BinarySearchTree::addNode(Node* node, Bid bid) {
+void BinarySearchTree::addNode(Node *node, Bid bid) {
 	// if node is larger than bid, add to left subtree
 	if (node->bid.bidId.compare(bid.bidId) > 0) {
 		if (node->left == nullptr) {
@@ -182,7 +180,7 @@ void BinarySearchTree::addNode(Node* node, Bid bid) {
 /*
  * Recursive method to print bid information to terminal
  */
-void BinarySearchTree::inOrder(Node* node) {
+void BinarySearchTree::inOrder(Node *node) {
 
 	if (node != nullptr) {
 		// traverse down left subtree recursively
@@ -196,7 +194,7 @@ void BinarySearchTree::inOrder(Node* node) {
 /*
  * Remove a node that contains a bid whose bidId matches bidKey
  */
-Node* BinarySearchTree::removeNode(Node* node, string bidId) {
+Node* BinarySearchTree::removeNode(Node *node, string bidId) {
 	// if node is null, return
 	if (node == nullptr) {
 		return node;
@@ -215,19 +213,19 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 		}
 		// node has left child only
 		else if (node->left != nullptr && node->right == nullptr) {
-			Node* tempNode = node;
+			Node *tempNode = node;
 			node = node->left;
 			delete tempNode;
 		}
 		// node has right child only
 		else if (node->left == nullptr && node->right != nullptr) {
-			Node* tempNode = node;
+			Node *tempNode = node;
 			node = node->right;
 			delete tempNode;
 		}
 		// node has left and right children
 		else {
-			Node* tempNode = node->right;
+			Node *tempNode = node->right;
 			while (tempNode->left != nullptr) {
 				tempNode = tempNode->left;
 			}
@@ -245,136 +243,160 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
  * @param csvPath the path to the CSV file to load
  * @return a container holding all the bids read
  */
-void loadBids(string csvPath, BinarySearchTree* bst) {
-    cout << "Loading CSV file " << csvPath << endl;
+void loadBids(string csvPath, BinarySearchTree *bst) {
+	cout << "Loading CSV file " << csvPath << endl;
 
-    // initialize the CSV Parser using the given path
-    csv::Parser file = csv::Parser(csvPath);
+	// initialize the CSV Parser using the given path
+	csv::Parser file = csv::Parser(csvPath);
 
-    // read and display header row - optional
-    vector<string> header = file.getHeader();
-    for (auto const& c : header) {
-        cout << c << " | ";
-    }
-    cout << "" << endl;
+	// read and display header row - optional
+	vector<string> header = file.getHeader();
+	for (auto const &c : header) {
+		cout << c << " | ";
+	}
+	cout << "" << endl;
 
-    try {
-        // loop to read rows of a CSV file
-        for (unsigned int i = 0; i < file.rowCount(); i++) {
+	try {
+		// loop to read rows of a CSV file
+		for (unsigned int i = 0; i < file.rowCount(); i++) {
 
-            // Create a data structure and add to the collection of bids
-            Bid bid;
-            bid.bidId = file[i][1];
-            bid.title = file[i][0];
-            bid.fund = file[i][8];
-            bid.amount = strToDouble(file[i][4], '$');
+			// Create a data structure and add to the collection of bids
+			Bid bid;
+			bid.bidId = file[i][1];
+			bid.title = file[i][0];
+			bid.fund = file[i][8];
+			bid.amount = strToDouble(file[i][4], '$');
 
-            //cout << "Item: " << bid.title << ", Fund: " << bid.fund << ", Amount: " << bid.amount << endl;
+			//cout << "Item: " << bid.title << ", Fund: " << bid.fund << ", Amount: " << bid.amount << endl;
 
-            // push this bid to the end
-            bst->Insert(bid);
-        }
-    } catch (csv::Error &e) {
-        std::cerr << e.what() << std::endl;
-    }
+			// push this bid to the end
+			bst->Insert(bid);
+		}
+	} catch (csv::Error &e) {
+		std::cerr << e.what() << std::endl;
+	}
 }
 
+void displayTime(clock_t ticks) {
+	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+	cout << "time: " << ticks << " ticks" << endl;
+	cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+}
+
+string getBidId() {
+
+	string bidKey;
+	cout << "Enter a bid ID" << endl;
+	cin.ignore();
+	getline(cin, bidKey);
+
+	return bidKey;
+}
 
 /**
  * The one and only main() method
  */
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // process command line arguments
-    string csvPath, bidKey;
-    switch (argc) {
-    case 2:
-        csvPath = argv[1];
-        bidKey = "98109";
-        break;
-    case 3:
-        csvPath = argv[1];
-        bidKey = argv[2];
-        break;
-    default:
-        csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-        bidKey = "98109";
-    }
+	// process command line arguments
+	string csvPath, searchValue;
+	switch (argc) {
+	case 2:
+		csvPath = argv[1];
+		break;
+	default:
+		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
+	}
 
-    // Define a timer variable
-    clock_t ticks;
+	// Define a timer variable
+	clock_t ticks;
 
-    // Define a binary search tree to hold all bids
-    BinarySearchTree* bst;
+	// Define a binary search tree to hold all bids
+	BinarySearchTree *bst;
 
-    Bid bid;
+	Bid bid;
 
-    int choice = 0;
-    while (choice != 9) {
-        cout << "Menu:" << endl;
-        cout << "  1. Load Bids" << endl;
-        cout << "  2. Display All Bids" << endl;
-        cout << "  3. Find Bid" << endl;
-        cout << "  4. Remove Bid" << endl;
-        cout << "  9. Exit" << endl;
-        cout << "Enter choice: ";
-        cin >> choice;
+	int choice = 0;
+	while (choice != 9) {
+		cout << "Menu:" << endl;
+		cout << "  1. Load Bids" << endl;
+		cout << "  2. Display All Bids" << endl;
+		cout << "  3. Find Bid" << endl;
+		cout << "  4. Remove Bid" << endl;
+		cout << "  9. Exit" << endl;
+		cout << "Enter choice: ";
 
-        switch (choice) {
+		// Prompt for selection - check input
+		while (!(cin >> choice)) {
+			cout << "Invalid choice, please try again" << endl;
+			cin.clear();
+			cin.ignore();
+		}
 
-        case 1:
-            bst = new BinarySearchTree();
+		switch (choice) {
 
-            // Initialize a timer variable before loading bids
-            ticks = clock();
+		case 1:
 
-            // Complete the method call to load the bids
-            loadBids(csvPath, bst);
+			bst = new BinarySearchTree();
 
-            // Calculate elapsed time and display result
-            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-            cout << "time: " << ticks << " clock ticks" << endl;
-            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
-            break;
+			// Initialize a timer variable before loading bids
+			ticks = clock();
 
-        case 2:
-        	// Initialize a timer variable before loading bids
+			// Complete the method call to load the bids
+			loadBids(csvPath, bst);
+
+			// Calculate elapsed time and display result
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+			displayTime(ticks);
+			break;
+
+		case 2:
+			// Initialize a timer variable before loading bids
 			ticks = clock();
 
 			bst->InOrder();
 
 			// Calculate elapsed time and display result
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-			cout << "time: " << ticks << " clock ticks" << endl;
-			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+			displayTime(ticks);
 
-            break;
+			break;
 
-        case 3:
-            ticks = clock();
+		case 3:
+			ticks = clock();
+			// Prompt user for a bid ID and search
+			searchValue = getBidId();
+			bid = bst->Search(searchValue);
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
-            bid = bst->Search(bidKey);
+			if (!bid.bidId.empty()) {
+				displayBid(bid);
+			} else {
+				cout << "Bid Id " << searchValue << " not found." << endl;
+			}
 
-            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+			displayTime(ticks);
 
-            if (!bid.bidId.empty()) {
-                displayBid(bid);
-            } else {
-            	cout << "Bid Id " << bidKey << " not found." << endl;
-            }
+			break;
 
-            cout << "time: " << ticks << " clock ticks" << endl;
-            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+		case 4:
+			// Prompt user for a bid ID and remove
+			searchValue = getBidId();
+			bst->Remove(searchValue);
+			break;
 
-            break;
+		case 9:
+			break;
 
-        case 4:
-            bst->Remove(bidKey);
-            break;
-        }
-    }
+		default:
+			cout << "Not a valid selection." << endl;
 
-    cout << "Good bye." << endl;
+			break;
+
+		}
+	}
+
+	cout << "Good bye." << endl;
 
 	return 0;
 }

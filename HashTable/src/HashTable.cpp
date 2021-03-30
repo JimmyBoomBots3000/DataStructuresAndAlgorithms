@@ -175,7 +175,7 @@ Bid getBid() {
 	getline(cin, bid.title);
 
 	cout << "Enter fund: ";
-	cin >> bid.fund;
+	getline(cin, bid.fund);
 
 	cout << "Enter amount: ";
 	cin.ignore();
@@ -407,11 +407,9 @@ int main(int argc, char *argv[]) {
 
 		case 3:
 			ticks = clock();
-
 			// Prompt user for a bid ID and search
 			searchValue = getBidId();
 			bid = bidTable->Search(searchValue);
-
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
 			// Display bid info if found
@@ -426,16 +424,17 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 4:
-			// Prompt user for a bid ID and search
+			// Prompt user for a bid ID and remove
 			searchValue = getBidId();
 			bidTable->Remove(searchValue);
+
 			break;
 
 		case 9:
 			break;
 
 		default:
-			cout << "Not a valid selection.";
+			cout << "Not a valid selection." << endl;
 
 			break;
 
