@@ -316,13 +316,19 @@ int main(int argc, char *argv[]) {
 
 	Bid bid;
 
+	bst = new BinarySearchTree();
+
+	ticks = clock();
+	loadBids(csvPath, bst);
+	ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+	displayTime(ticks);
+
 	int choice = 0;
 	while (choice != 9) {
 		cout << "Menu:" << endl;
-		cout << "  1. Load Bids" << endl;
-		cout << "  2. Display All Bids" << endl;
-		cout << "  3. Find Bid" << endl;
-		cout << "  4. Remove Bid" << endl;
+		cout << "  1. Display All Bids" << endl;
+		cout << "  2. Find Bid" << endl;
+		cout << "  3. Remove Bid" << endl;
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 
@@ -336,33 +342,14 @@ int main(int argc, char *argv[]) {
 		switch (choice) {
 
 		case 1:
-
-			bst = new BinarySearchTree();
-
-			// Initialize a timer variable before loading bids
 			ticks = clock();
-
-			// Complete the method call to load the bids
-			loadBids(csvPath, bst);
-
-			// Calculate elapsed time and display result
+			bst->InOrder();
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 			displayTime(ticks);
+
 			break;
 
 		case 2:
-			// Initialize a timer variable before loading bids
-			ticks = clock();
-
-			bst->InOrder();
-
-			// Calculate elapsed time and display result
-			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-			displayTime(ticks);
-
-			break;
-
-		case 3:
 			ticks = clock();
 			// Prompt user for a bid ID and search
 			searchValue = getBidId();
@@ -379,7 +366,7 @@ int main(int argc, char *argv[]) {
 
 			break;
 
-		case 4:
+		case 3:
 			// Prompt user for a bid ID and remove
 			searchValue = getBidId();
 			bst->Remove(searchValue);
